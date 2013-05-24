@@ -1,3 +1,12 @@
+############
+## CONFIG ##
+############
+
+# Should get absolute basepath from argument params[0]
+base_path = "D:\\Webserver\\xampp\\htdocs\\blend-stats\\" # absolute server path?
+
+############
+
 import bpy
 import json
 import os
@@ -101,10 +110,6 @@ except ValueError:
 else:
     params = sys.argv[idx:] # if .index -> idx+1
 print("Script params:", params)
-
-# Should get absolute basepath from argument params[0]
-base_path = "D:\\Webserver\\xampp\\htdocs\\blendswap\\" # absolute server path?
-
 
 
 output['stats'] = stats
