@@ -3,7 +3,7 @@
 ############
 
 # Should get absolute basepath from argument params[0]
-base_path = "D:\\Webserver\\xampp\\htdocs\\blend-stats\\" # absolute server path?
+base_path = "D:\\Webserver\\xampp\\htdocs\\blend_stats\\" # absolute server path?
 
 ############
 
