@@ -15,7 +15,7 @@ if ( ! function_exists('debug') ) {
 /**
  * A class to be used in your PHP application for access to blend file stats
  * Usage:
- * 		$bst = new BlendStats( $path_to_blend_file , 'blender' );
+ * 		$bst = new BlendStats( $path_to_blend_file );
  * 		$stats = $bst->get_stats();
  * 		// do operations on $stats
  */
@@ -31,10 +31,10 @@ class BlendStats {
 
 	/**
 	 * Constructor for this class
-	 * you should pass the blend file path and the blender binary call as it 
+	 * you should pass the blend file path and the Blender binary call as it 
 	 * will be called
-	 * @param [type] $file_path      [description]
-	 * @param [type] $blender_bin [description]
+	 * @param [type] $file_path   full path of the blend file you want to read
+	 * @param [type] $blender_bin Blender binary, use if you don't have Blender in $PATH
 	 */
 	public function __construct( $fpath = null, $bin = 'blender' ) {
 		if ( ! $fpath || ! $bin ) {
@@ -54,9 +54,9 @@ class BlendStats {
 	}
 
 	/**
-	 * Reads file from disk and return full uotput from blender
+	 * Reads file from disk and return full uotput from Blender
 	 * @param  string $path the absolute path to the blend file
-	 * @return string       the full blender output on runtime
+	 * @return string       the full Blender output on runtime
 	 */
 	public function get_blender_output() {
 		$output = "";
@@ -81,8 +81,8 @@ class BlendStats {
 
 	/**
 	 * Takes the raw output and returns the json string we want
-	 * @param  [type] $raw [description]
-	 * @return [type]      [description]
+	 * @param  string $raw Raw output from Blender
+	 * @return string      the isolated json string in the Blender output
 	 */
 	private function isolate_json( $raw = null ) {
 		$start_pos = strpos($raw, $this->start_marker);
