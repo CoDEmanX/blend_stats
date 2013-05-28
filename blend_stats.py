@@ -12,32 +12,19 @@ import json
 import os
 
 context = bpy.context
-output = {}
-# stats = {}
 
-
-def mode_set_object():
-
-    # Bug? Doesn't change mode if Blender runs in background mode
-    #if bpy.ops.object.mode_set.poll():
-    #    bpy.ops.object.mode_set(mode='OBJECT', toggle=False)
-    #else:
-    #    print("mode_set.poll() failed.")
-
-    if context.mode != 'OBJECT':
+def toggle_object_mode():
+    while context.mode != 'OBJECT':
         bpy.ops.object.editmode_toggle()
-
-    # If mode was e.g. 'PAINT_WEIGHT', it's now 'EDIT_MESH'. Call again...
-    if context.mode != 'OBJECT':
-        bpy.ops.object.editmode_toggle()
-
     if context.mode != 'OBJECT':
         print("Error: mode still not 'OBJECT'!")
+
 
 def isabs(filepath):
     #return os.path.isabs(filepath)
     #return not (filepath.startswith("//") or ".." in filepath)
     return not filepath.startswith("//")
+
 
 def is_valid_path(filepath, basepath):
     print("basepath", basepath)
@@ -50,6 +37,8 @@ def is_valid_path(filepath, basepath):
     print("realpath", realpath)
     return realpath.startswith(basepath) and os.path.exists(realpath) and os.path.isfile(realpath)
 
+# Vars for hoding results
+output = {}
 scenes = []
 
 
@@ -59,7 +48,7 @@ for scene in bpy.data.scenes:
     # It's still required, since Scene.statistics() requires the scene being active!
     context.screen.scene = scene
 
-    mode_set_object()
+    toggle_object_mode()
 
     verts = sum(len(ob.data.vertices) for ob in scene.objects if ob.type == 'MESH')
     polygons = sum(len(ob.data.polygons) for ob in scene.objects if ob.type == 'MESH')
@@ -77,15 +66,6 @@ for scene in bpy.data.scenes:
         elif segment_split[0] == "Tris":
             triangles = int(segment_split[1])
 
-    # stats[scene.name] = {
-    #     'verts': verts,
-    #     'verts_modified': verts_modified,
-    #     'polygons': polygons,
-    #     'polygons_modified': polygons_modified,
-    #     'triangles': triangles,
-    #     'render_engine': render_engine,
-    #     'objects_mesh': objects_mesh,
-    # }
     this_scene = {
         'name': scene.name,
         'verts': verts,
@@ -111,7 +91,7 @@ try:
 
     idx = len(sys.argv) - 1
     while idx >= 0:
-        if sys.argv[idx] == "--":
+        if sys.argv[idx] == " -- ":
             idx += 1
             break
         idx -= 1

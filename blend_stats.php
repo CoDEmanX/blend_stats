@@ -29,6 +29,8 @@ class BlendStats {
 
 	public $blender_bin = null;
 
+	private $stats = null;
+
 	/**
 	 * Constructor for this class
 	 * you should pass the blend file path and the Blender binary call as it 
@@ -50,7 +52,7 @@ class BlendStats {
 		if ( ! $this->blend_path ) {
 			return null;
 		}
-		$this->script_path = dirname(__FILE__) . DS . 'stats.py';
+		$this->script_path = dirname(__FILE__) . DS . 'blend_stats.py';
 	}
 
 	/**
@@ -60,8 +62,19 @@ class BlendStats {
 	 */
 	public function get_blender_output() {
 		$output = "";
-		$output = shell_exec($this->blender_bin .' -y -Y -b '. $this->blend_path .' --python '. $this->script_path .' --verbose 2');
+		$output = shell_exec($this->blender_bin .' -y -Y -b '. $this->blend_path .' --python '. $this->script_path .' --verbose 2 -- ' . $this->blend_dir);
 		return $output;
+	}
+
+	/**
+	 * [get_stats description]
+	 * @return [type] [description]
+	 */
+	public function get_stats() {
+		if ( ! $this->stats ) {
+			$this->load_stats();
+		}
+		return $this->stats;
 	}
 
 	/**
@@ -70,13 +83,14 @@ class BlendStats {
 	 * @param  [type] $path [description]
 	 * @return stdClass     Standard object with stats
 	 */
-	public function get_stats() {
+	public function load_stats() {
 		if ( ! $this->blend_path ) {
 			return null;
 		}
 		$raw_output = $this->get_blender_output( $this->blend_path );
 		$json_string = $this->isolate_json( $raw_output );
-		return json_decode( $json_string );
+		$this->stats = json_decode( $json_string );
+		return $this->stats;
 	}
 
 	/**
