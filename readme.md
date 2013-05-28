@@ -22,7 +22,7 @@ $blendStats = $bst->get_stats();
 // use the stats
 $blend['statistics'] = $blendStats->stats;
 
-// Save to database? Save to File? Whatever you to do.
+// Save to database? Save to File? Whatever you have to do.
 
 ?>
 ```
