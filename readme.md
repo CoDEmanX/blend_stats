@@ -30,7 +30,7 @@ $blend['statistics'] = $blendStats->stats;
 
 ## Notes:
 
-[*] there's a second argument for the constructor with which the Blender binary call is passed; it defaults to `'blender'` and works just fine if you have Blender in your System PATH so this arg is optional. If for some reason you can't have Blender added to your System PATH var, then you should pass a second parameter to the constructor with the location of your Blender binary file for example in windows you'd call it like this:
+[*] there's a second argument for the constructor with which the Blender binary call is passed; it defaults to `'blender'` and works just fine if you have Blender in your System PATH so this arg is optional. If for some reason you can't have Blender added to your System PATH var, then you should pass the path to your local Blender binary in the second parameter of the constructor; for example:
 
 ```php
 <?php 
