@@ -1,11 +1,8 @@
 <?php
 
-require "logic.php";
+include "blend_stats.php";
 
 $blend_path = "test/test.blend";
-
-$raw_stats = get_stats($blend_path);
-$stats = parse_stats($raw_stats);
 
 ?>
 
@@ -28,30 +25,10 @@ $stats = parse_stats($raw_stats);
     </style>
 </head>
 <body>
-    <table>
-        <tr>
-            <td>
-
-
-                <pre id="left">
-<?php
-                    print_r($raw_stats);
-?>
-                </pre>
-
-            </td>
-            <td>
-                <pre id="right">
-<?php
-                    if ($stats === FALSE) {
-                        echo("Couldn't parse stats, sorry.");
-                    } else {
-                       print_r($stats);
-                    }
-?>
-                </pre>
-            </td>
-        </tr>
-    </table>
+    <h2>BlendStats example</h2>
+    <?php 
+    $bst = new BlendStats( $blend_path );
+    debug( $bst->get_stats() );
+     ?>
 </body>
 </html>

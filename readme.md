@@ -17,10 +17,12 @@ include '/path/to/blend_stats.php';
 $bst = new BlendStats( '/path/to/blend/file.blend' );
 
 // get the stats
-$blendStats = $bst->get_stats();
+$bst->get_stats();
 
 // use the stats
-$blend['statistics'] = $blendStats->stats;
+foreach ( $bst->stats->scenes as $scene ) {
+    echo $scene->name;
+}
 
 // Save to database? Save to File? Whatever you have to do.
 
@@ -28,7 +30,48 @@ $blend['statistics'] = $blendStats->stats;
 ```
 
 
+## Output Structure:
+
+BlendStats::get_stats(); returns an object containing two arrays:
+
+```php
+<?php 
+object(stdClass) {
+    bad_images => array(
+        // Contains paths to broken links
+        )
+    scenes => array(
+        (int) 0 => object(stdClass) {
+            name => 'Scene'
+            objects_mesh => (int) 7
+            polygons => (int) 5834
+            polygons_modified => (int) 16539
+            render_engine => 'CYCLES'
+            triangles => (int) 32262
+            verts => (int) 5754
+            verts_modified => (int) 16675
+        },
+        (int) 1 => object(stdClass) {
+            name => 'Scene.001'
+            objects_mesh => (int) 0
+            polygons => (int) 0
+            polygons_modified => (int) 0
+            render_engine => 'BLENDER_RENDER'
+            triangles => (int) 0
+            verts => (int) 0
+            verts_modified => (int) 0
+        }
+    )
+}
+
+?>
+```
+
 ## Notes:
+
+You need Blender installed on your website's server, this means that you'll need a dedicated server in order to use this lib effectively with PHP. (this lib might be modified in the future to make direct from PHP reads possible, but until then blender is a requirement/dependency).
+
+This lib is rather slow, and you might need a lot of RAM on your server to run Blender from the cli as this lib requires it with acceptable performance.
 
 [*] there's a second argument for the constructor with which the Blender binary call is passed; it defaults to `'blender'` and works just fine if you have Blender in your System PATH so this arg is optional. If for some reason you can't have Blender added to your System PATH var, then you should pass the path to your local Blender binary in the second parameter of the constructor; for example:
 
@@ -43,5 +86,3 @@ $bst = new BlendStats('/path/to/file.blend', '/path/to/blender');
 
 ?>
 ```
-
-* This lib is rather slow, and you might need a lot of RAM on your server to run it with acceptable performance.
