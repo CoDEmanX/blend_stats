@@ -13,7 +13,7 @@ import os
 
 context = bpy.context
 output = {}
-
+# stats = {}
 
 
 def mode_set_object():
@@ -50,8 +50,8 @@ def is_valid_path(filepath, basepath):
     print("realpath", realpath)
     return realpath.startswith(basepath) and os.path.exists(realpath) and os.path.isfile(realpath)
 
-# holds the stats array
 scenes = []
+
 
 for scene in bpy.data.scenes:
 
@@ -87,15 +87,18 @@ for scene in bpy.data.scenes:
     #     'objects_mesh': objects_mesh,
     # }
     this_scene = {
-        'name':                 scene.name,
-        'verts':                verts,
-        'verts_modified':       verts_modified,
-        'polygons':             polygons,
-        'polygons_modified':    polygons_modified,
-        'triangles':            triangles,
-        'render_engine':        render_engine,
-        'objects_mesh':         objects_mesh}
+        'name': scene.name,
+        'verts': verts,
+        'verts_modified': verts_modified,
+        'polygons': polygons,
+        'polygons_modified': polygons_modified,
+        'triangles': triangles,
+        'render_engine': render_engine,
+        'objects_mesh': objects_mesh,
+    }
     scenes.append(this_scene)
+
+output['scenes'] = scenes
 
 
 # Get script parameters
@@ -123,19 +126,16 @@ else:
 print("Script params:", params)
 
 
-output['scenes'] = scenes
+# output['stats'] = stats
 
 bad_images = []
 
 
 for image in bpy.data.images:
-    img_ud = image.users > 0
-    img_pk = image.packed_file is None
-    img_pt = image.filepath
-    img_vd = is_valid_path(image.filepath, base_path)
-    img_lib = image.library is not None
-    img_is_fine = (img_ud and img_pk and img_pt and not img_vd) or img_lib
-    if img_is_fine and image.name not in bad_images:
+    if ((image.users > 0 and image.packed_file is None and image.filepath and not is_valid_path(image.filepath, base_path)) \
+       or image.library is not None) \
+       and image.name not in bad_images:
+
         bad_images.append(image.name)
 
 output['bad_images'] = bad_images
