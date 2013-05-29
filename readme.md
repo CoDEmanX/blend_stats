@@ -73,7 +73,7 @@ You will need Blender installed on your website's server, this means that you'll
 
 This lib is rather slow, and you might need a lot of RAM on your server to run Blender from the cli as this lib requires it with acceptable performance.
 
-[*] there's a second argument for the constructor with which the Blender binary call is passed; it defaults to `'blender'` and works just fine if you have Blender in your System PATH so this arg is optional. If for some reason you can't have Blender added to your System PATH var, then you should pass the path to your local Blender binary in the second parameter of the constructor; for example:
+[*] There's a second argument for the constructor with which the Blender binary call is passed; it defaults to `'blender'` and works just fine if you have Blender in your System PATH so this arg is optional. If for some reason you can't have Blender added to your System PATH var, then you should pass the path to your local Blender binary in the second parameter of the constructor; for example:
 
 ```php
 <?php 
@@ -81,12 +81,13 @@ This lib is rather slow, and you might need a lot of RAM on your server to run B
 // ON WINDOWS:
 $bst = new BlendStats('C:\\path\\to\\file.blend', 'C:\\path\\to\\blender\\blender');
 
-// ON POSIX
-$bst = new BlendStats('/path/to/file.blend', '/path/to/blender');
+// ON POSIX 
+// normally in /usr/local/bin/blender 
+// when compiled with WITH_PORTABLE=OFF
+$bst = new BlendStats('/path/to/file.blend', '/usr/local/bin/blender');
 
 ?>
 ```
-
 
 ## License
 
