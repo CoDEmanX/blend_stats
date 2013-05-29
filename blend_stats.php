@@ -127,8 +127,8 @@ class BlendStats {
 
 	public function test() {
 		$test_file = dirname(__FILE__) . DS . "test/test.blend";
-		$this->get_stats( $test_file );
-		debug( $this->stats );
+		$bst = new BlendStats( $test_file );
+		debug( $bst->stats );
 	}
 
 }
