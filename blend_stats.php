@@ -58,18 +58,12 @@ class BlendStats {
 	 * @param [type] $blender_bin Blender binary, use if you don't have Blender in $PATH
 	 */
 	public function __construct( $fpath = null, $bin = 'blender' ) {
-		if ( ! $fpath || ! $bin ) {
-			die("You passed one argument, we need two.");
-		}
 		if ( ! defined('DS') ) {
 			define('DS', DIRECTORY_SEPARATOR);
 		}
 		if ( file_exists($fpath) ) {
 			$this->blend_path = $fpath;
 			$this->blender_bin = $bin;
-		}
-		if ( ! $this->blend_path ) {
-			return null;
 		}
 		$this->script_path = dirname(__FILE__) . DS . 'blend_stats.py';
 	}
