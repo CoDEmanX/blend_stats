@@ -81,7 +81,7 @@ class BlendStats {
 	 */
 	public function get_blender_output() {
 		$output = "";
-		$output = shell_exec($this->blender_bin .' -y -Y -b '. $this->blend_path .' --python '. $this->script_path .' --verbose 2 -- ' . $this->blend_dir);
+		$output = shell_exec($this->blender_bin .' -noaudio -d -y -Y -b '. $this->blend_path .' --python '. $this->script_path .' --verbose 2 -- ' . $this->blend_dir);
 		return $output;
 	}
 

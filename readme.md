@@ -69,7 +69,7 @@ object(stdClass) {
 
 ## Notes:
 
-You need Blender installed on your website's server, this means that you'll need a dedicated server in order to use this lib effectively with PHP. (this lib might be modified in the future to make direct from PHP reads possible, but until then blender is a requirement/dependency).
+You will need Blender installed on your website's server, this means that you'll need a dedicated server where you can install software on your own in order to use this lib effectively with PHP. (this lib might be modified in the future to make direct from PHP reads possible, but until then blender is a requirement/dependency).
 
 This lib is rather slow, and you might need a lot of RAM on your server to run Blender from the cli as this lib requires it with acceptable performance.
 
@@ -86,3 +86,10 @@ $bst = new BlendStats('/path/to/file.blend', '/path/to/blender');
 
 ?>
 ```
+
+
+## License
+
+This software is provided as is, without any warranty of any kind, if you mess up your server by using this library it's your responsibility to solve it. We do not provide support for this tool, and we will puclish updates only when we need them.
+
+You are welcome to contribute to this software with customizations and 
