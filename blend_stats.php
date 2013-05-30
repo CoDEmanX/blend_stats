@@ -66,6 +66,7 @@ class BlendStats {
 			$this->blender_bin = $bin;
 		}
 		$this->script_path = dirname(__FILE__) . DS . 'blend_stats.py';
+		$this->test_file = dirname(__FILE__) . DS . "test/test.blend";
 	}
 
 	/**
@@ -75,7 +76,7 @@ class BlendStats {
 	 */
 	public function get_blender_output() {
 		$output = "";
-		$output = shell_exec($this->blender_bin .' -noaudio -d -y -Y -b '. $this->blend_path .' --python '. $this->script_path .' --verbose 2 -- ' . $this->blend_dir);
+		$output = shell_exec($this->blender_bin .' -noaudio -d -y -Y -b '. $this->blend_path .' --python '. $this->script_path .' --verbose 2 -- ' . $this->blend_dir . ' || echo "Command inaccessible"');
 		return $output;
 	}
 
@@ -126,8 +127,7 @@ class BlendStats {
 
 
 	public function test() {
-		$test_file = dirname(__FILE__) . DS . "test/test.blend";
-		$bst = new BlendStats( $test_file );
+		$bst = new BlendStats( $this->test_file );
 		$bst->get_stats();
 		debug( $bst->stats );
 	}
