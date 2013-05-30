@@ -46,7 +46,7 @@ class BlendStats {
 
 	public $blend_dir = null;
 
-	public $blender_bin = null;
+	public $blender_bin = '/usr/local/bin/blender';
 
 	public $stats = null;
 
@@ -130,6 +130,7 @@ class BlendStats {
 		$bst = new BlendStats( $this->test_file );
 		$bst->get_stats();
 		debug( $bst->stats );
+		debug( shell_exec("ls") );
 	}
 
 }
