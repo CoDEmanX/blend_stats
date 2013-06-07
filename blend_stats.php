@@ -57,26 +57,52 @@ class BlendStats {
 	 * @param [type] $file_path   full path of the blend file you want to read
 	 * @param [type] $blender_bin Blender binary, use if you don't have Blender in $PATH
 	 */
-	public function __construct( $fpath = null, $bin = 'blender' ) {
+	public function __construct( $blend_path = null, $bin = 'blender' ) {
 		if ( ! defined('DS') ) {
 			define('DS', DIRECTORY_SEPARATOR);
 		}
-		if ( file_exists($fpath) ) {
-			$this->blend_path = $fpath;
-			$this->blender_bin = $bin;
-		}
 		$this->script_path = dirname(__FILE__) . DS . 'blend_stats.py';
 		$this->test_file = dirname(__FILE__) . DS . "test/test.blend";
+		if ( file_exists($blend_path) ) {
+			$this->blend_path = $blend_path;
+			$this->blender_bin = $bin;
+		} else {
+			$this->blend_path = $this->test_file;
+		}
 	}
 
 	/**
-	 * Reads file from disk and return full uotput from Blender
+	 * Helper function to set the blend file path
+	 * @param string $blend_path new absolute path to blend file
+	 * @return boolean path was set corretly and is equal to passed arg
+	 */
+	public function set_blend_path( $blend_path ) {
+		$this->blend_path = $blend_path;
+		return $this->blend_path === $blend_path;
+	}
+
+	/**
+	 * Returns the currently set blend file path
+	 * @return string the blend path. returns false if path was set to the test file fallback.
+	 */
+	public function get_blend_path() {
+		if ( $this->blend_path === $this->test_file ) {
+			return false;
+		} else {
+			return $this->blend_path;
+		}
+	}
+
+	/**
+	 * Reads file from disk and return full uotput from Blender.
 	 * @param  string $path the absolute path to the blend file
-	 * @return string       the full Blender output on runtime
+	 * @return string       the full Blender output on runtime. returns null if shell_exec() fails
 	 */
 	public function get_blender_output() {
 		$output = "";
-		$output = shell_exec($this->blender_bin .' -noaudio -d -y -Y -b '. $this->blend_path .' --python '. $this->script_path .' --verbose 2 -- ' . $this->blend_dir . ' 2>&1 1> /dev/null');
+		$cmd = $this->blender_bin .' -noaudio -y -Y -b ' . $this->blend_path 
+				.' --python '. $this->script_path .' --verbose 2 ';
+		$output = shell_exec( $cmd );
 		return $output;
 	}
 
