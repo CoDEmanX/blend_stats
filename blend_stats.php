@@ -1,4 +1,4 @@
-<?php 
+<?php
 /*
 This file is part of BlendStats.
 
@@ -52,7 +52,7 @@ class BlendStats {
 
 	/**
 	 * Constructor for this class
-	 * you should pass the blend file path and the Blender binary call as it 
+	 * you should pass the blend file path and the Blender binary call as it
 	 * will be called
 	 * @param [type] $file_path   full path of the blend file you want to read
 	 * @param [type] $blender_bin Blender binary, use if you don't have Blender in $PATH
@@ -100,8 +100,10 @@ class BlendStats {
 	 */
 	public function get_blender_output() {
 		$output = "";
-		$cmd = $this->blender_bin .' -noaudio -y -Y -b ' . $this->blend_path 
-				.' --python '. $this->script_path .' --verbose 2 ';
+		// Flag --disable_autoexec in shell command is prefered over -Y, as it's clearer.
+		// Blender 2.4x might even use -Y to allow script execution, and -y to disable (needs testing).
+		$cmd = $this->blender_bin .' -noaudio --disable-autoexec --background '
+			   . $this->blend_path .' --python '. $this->script_path;
 		$output = shell_exec( $cmd );
 		return $output;
 	}
@@ -118,7 +120,7 @@ class BlendStats {
 	}
 
 	/**
-	 * Cleans the raw output from get_blender_output and returns a PHP object 
+	 * Cleans the raw output from get_blender_output and returns a PHP object
 	 * containing all the stats for direct access
 	 * @param  [type] $path [description]
 	 * @return stdClass     Standard object with stats
@@ -145,7 +147,7 @@ class BlendStats {
 			return null;
 		}
 		$start_pos += strlen( $this->start_marker );
-		
+
 		$json_string = substr($raw, $start_pos, $end_pos - strlen($raw) );
 
 		return trim( $json_string );
