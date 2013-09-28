@@ -14,30 +14,40 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with BlendStats.  If not, see <http://www.gnu.org/licenses/>.
 """
+# <pep8-80 compliant>
 
 ############
 ## CONFIG ##
-############
+###################################################################
 
 # Should get absolute basepath from argument params[0]
-base_path = "D:\\Webserver\\xampp\\htdocs\\blend_stats\\" # absolute server path?
+base_path = "D:\\Webserver\\xampp\\htdocs\\blend_stats\\"
 
-############
+###################################################################
 
 import bpy
 import json
 import os
+import sys
 
 context = bpy.context
 
-
+# Workaround - ensure object mode, even if scene is actually
+# in an invalid state (context manipulated by evil script)
 def toggle_object_mode():
+
     limit = 3  # 3 iterations at most
-    while 'OBJECT' != context.mode and bpy.ops.object.editmode_toggle.poll() and limit > 0:
+    while ('OBJECT' != context.mode and limit > 0 and
+           bpy.ops.object.editmode_toggle.poll()):
+
+        # mode_set(mode='OBJECT') broken in background mode up to r57205
         bpy.ops.object.editmode_toggle()
         limit -= 1
+
     if context.mode != 'OBJECT':
+        # Should only occur if above poll failed (ever?)
         print("Error: mode still not 'OBJECT'!")
+        print("Scene statistics output is going to be incorrect.")
 
 
 def isabs(filepath):
@@ -54,28 +64,40 @@ def is_valid_path(filepath, basepath):
         return False
     realpath = os.path.realpath(bpy.path.abspath(filepath))
     # print("realpath", realpath)
-    return realpath.startswith(basepath) and os.path.exists(realpath) and os.path.isfile(realpath)
+    return (realpath.startswith(basepath) and
+            os.path.exists(realpath) and
+            os.path.isfile(realpath))
 
-# Vars for hoding results
+# Vars for holding results
 output = {}
 scenes = []
 
 
 for scene in bpy.data.scenes:
 
-    # Was supposed to reset mode to 'OBJECT', but doesn't work in background mode
-    # It's still required, since Scene.statistics() requires the scene being active!
+    # Setting active scene resets object mode in regular Blender use.
+    # Unfortunately, it doesn't switch if running in background mode.
+    # However, Scene.statistics() still requires the scene being active!
     context.screen.scene = scene
 
+    # Ensure 'OBJECT' mode
     toggle_object_mode()
 
-    verts = sum(len(ob.data.vertices) for ob in scene.objects if ob.type == 'MESH')
-    polygons = sum(len(ob.data.polygons) for ob in scene.objects if ob.type == 'MESH')
+    verts = sum(len(ob.data.vertices) \
+        for ob in scene.objects if ob.type == 'MESH')
+
+    polygons = sum(len(ob.data.polygons) \
+        for ob in scene.objects if ob.type == 'MESH')
+
     render_engine = scene.render.engine
+
     objects_mesh = len([ob for ob in scene.objects if ob.type == 'MESH'])
 
-    builtin_stats = scene.statistics()  # includes modifiers!
+    # Get scene statistics from built-in function (object mode required)
+    # It includes modifiers (final meshes)!
+    builtin_stats = scene.statistics()
 
+    # Extract relevant information
     for segment in builtin_stats.split(" | "):
         segment_split = segment.split(":")
         if segment_split[0] == "Verts":
@@ -100,40 +122,41 @@ for scene in bpy.data.scenes:
 output['scenes'] = scenes
 
 
-# Get script parameters
-import sys
+# Get script parameters:
+# all list items after the last occurence of "--"
+print()
+print(sys.argv)
+print()
+
 try:
-    #idx = sys.argv.index("--")
+    args = list(reversed(sys.argv))
+    idx = args.index("--")
 
-    # all list items after the last occurence of "--"
-    #idx = len(sys.argv) - list(reversed(sys.argv)).index("--")
-
-    idx = len(sys.argv) - 1
-    while idx >= 0:
-        if sys.argv[idx] == " -- ":
-            idx += 1
-            break
-        idx -= 1
-
-    # additional sanity check, might decrease lower boundary value
-    if idx < 6 or idx >= len(sys.argv):
-        raise ValueError
 except ValueError:
     params = []
+
 else:
-    params = sys.argv[idx:]  # if .index -> idx+1
+    params = args[:idx][::-1]
+
 print("Script params:", params)
 
 
-# output['stats'] = stats
-
+# Check for broken image references
 bad_images = []
 
-
 for image in bpy.data.images:
-    if ((image.users > 0 and image.packed_file is None and image.filepath and not is_valid_path(image.filepath, base_path)) \
-       or image.library is not None) \
-       and image.name not in bad_images:
+
+    if image.name in bad_images:
+        continue
+
+    if ((image.users > 0 # image datablock in use (ignores use_fake_user)
+         and image.packed_file is None # image not stored inside the .blend
+         and image.filepath # filepath string is not empty
+         # valid means: blender-style relative path, inside base path,
+         # path actually exists and path references a file. Checks for invalid.
+         and not is_valid_path(image.filepath, base_path)
+        )
+        or image.library is not None): # is linked from another .blend
 
         bad_images.append(image.name)
 
@@ -149,6 +172,8 @@ output['version'] = {
 }
 """
 
+# Dump gathered information to command line
+# JSON module safely encodes UTF8/16 chars, as well as escape sequences
 print("\n---STATS---BEGIN---")
 print(json.dumps(output, indent=4, sort_keys=True))
 print("---STATS---END---")
