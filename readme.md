@@ -91,6 +91,6 @@ $bst = new BlendStats('/path/to/file.blend', '/usr/local/bin/blender');
 
 ## License
 
-This software is provided as is, without any warranty of any kind, if you mess up your server by using this library it's your responsibility to solve it. We do not provide support for this tool, and we will puclish updates only when we need them.
+This software is provided as is, without any warranty of any kind, if you mess up your server by using this library it's your responsibility to solve it. We do not provide support for this tool, and we will publish updates only when we need them.
 
 You are welcome to contribute to this software with customizations and 
